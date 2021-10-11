@@ -109,6 +109,9 @@ export async function mint(
   }
   const metadataAddress = await getMetadata(mint.publicKey);
   const masterEdition = await getMasterEdition(mint.publicKey);
+  console.log(candyMachine.wallet2.toBase58());
+  console.log(candyMachine.wallet3.toBase58());
+  console.log(candyMachine.wallet4.toBase58());
 
   instructions.push(
     await anchorProgram.instruction.mintNft({
@@ -117,7 +120,10 @@ export async function mint(
         candyMachine: candyMachineAddress,
         payer: userKeyPair.publicKey,
         //@ts-ignore
-        wallet: candyMachine.wallet,
+        wallet1: candyMachine.wallet1,
+        wallet2: candyMachine.wallet2,
+        wallet3: candyMachine.wallet3,
+        wallet4: candyMachine.wallet4,
         mint: mint.publicKey,
         metadata: metadataAddress,
         masterEdition,
