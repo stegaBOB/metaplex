@@ -466,20 +466,40 @@ programCommand('create_candy_machine')
     'SPL token account that receives mint payments. Only required if spl-token is specified.',
   )
   .option(
-    '-s1, --sol-treasury-account1 <string>',
-    'SOL account that receives mint payments.',
+    '-st1, --sol-treasury-account1 <string>',
+    '1st SOL account that receives mint payments.',
   )
   .option(
-    '-s2, --sol-treasury-account2 <string>',
-    'SOL account that receives mint payments.',
+    '-s1, --split1 <string>',
+    'the percent of the mint price that the sol-treasury-account1 recieves.',
+    '100',
   )
   .option(
-    '-s3, --sol-treasury-account3 <string>',
-    'SOL account that receives mint payments.',
+    '-st2, --sol-treasury-account2 <string>',
+    '2nd SOL account that receives mint payments.',
+    '0',
   )
   .option(
-    '-s4, --sol-treasury-account4 <string>',
-    'SOL account that receives mint payments.',
+    '-s2, --split2 <string>',
+    'the percent of the mint price that the sol-treasury-account2 recieves.',
+  )
+  .option(
+    '-st3, --sol-treasury-account3 <string>',
+    '3rd SOL account that receives mint payments.',
+    '0',
+  )
+  .option(
+    '-s3, --split3 <string>',
+    'the percent of the mint price that the sol-treasury-account3 recieves.',
+  )
+  .option(
+    '-st4, --sol-treasury-account4 <string>',
+    '4th SOL account that receives mint payments.',
+  )
+  .option(
+    '-s4, --split4 <string>',
+    'the percent of the mint price that the sol-treasury-account4 recieves.',
+    '0',
   )
   .action(async (directory, cmd) => {
     const {
@@ -490,9 +510,13 @@ programCommand('create_candy_machine')
       splToken,
       splTokenAccount,
       solTreasuryAccount1,
+      split1,
       solTreasuryAccount2,
+      split2,
       solTreasuryAccount3,
+      split3,
       solTreasuryAccount4,
+      split4,
     } = cmd.opts();
 
     let parsedPrice = parsePrice(price);
@@ -555,16 +579,36 @@ programCommand('create_candy_machine')
         isSigner: false,
       });
     }
-    console.log(solTreasuryAccount1);
-    console.log(solTreasuryAccount2);
-    console.log(solTreasuryAccount3);
-    console.log(solTreasuryAccount4);
+    if (
+      parseInt(split1) +
+        parseInt(split2) +
+        parseInt(split3) +
+        parseInt(split4) !=
+      100
+    ) {
+      throw new Error(`The splits do not add up to 100`);
+    }
     if (solTreasuryAccount1) {
+      console.log('ST1: ', solTreasuryAccount1);
+      console.log('Split1: ', split1);
       wallet1 = new PublicKey(solTreasuryAccount1);
+    }
+    if (solTreasuryAccount2) {
+      console.log('ST2: ', solTreasuryAccount2);
+      console.log('Split2: ', split2);
       wallet2 = new PublicKey(solTreasuryAccount2);
+    }
+    if (solTreasuryAccount3) {
+      console.log('ST3: ', solTreasuryAccount3);
+      console.log('Split3: ', split3);
       wallet3 = new PublicKey(solTreasuryAccount3);
+    }
+    if (solTreasuryAccount4) {
+      console.log('ST4: ', solTreasuryAccount4);
+      console.log('Split4: ', split4);
       wallet4 = new PublicKey(solTreasuryAccount4);
     }
+    // split1 = new anchor.BN(split1,)
 
     const config = new PublicKey(cacheContent.program.config);
     const [candyMachine, bump] = await getCandyMachineAddress(

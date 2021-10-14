@@ -71,7 +71,7 @@ pub mod nft_candy_machine {
                 authority: transfer_authority_info.clone(),
                 authority_signer_seeds: &[],
                 token_program: ctx.accounts.token_program.clone(),
-                amount: candy_machine.data.price / 100 * candy_machine.splits.wallet1 as u64,
+                amount: candy_machine.data.price / 100 * candy_machine.data.sp1 as u64,
             })?;
             spl_token_transfer(TokenTransferParams {
                 source: token_account_info.clone(),
@@ -79,7 +79,7 @@ pub mod nft_candy_machine {
                 authority: transfer_authority_info.clone(),
                 authority_signer_seeds: &[],
                 token_program: ctx.accounts.token_program.clone(),
-                amount: candy_machine.data.price / 100 * candy_machine.splits.wallet2 as u64,
+                amount: candy_machine.data.price / 100 * candy_machine.data.sp2 as u64,
             })?;
             spl_token_transfer(TokenTransferParams {
                 source: token_account_info.clone(),
@@ -87,7 +87,7 @@ pub mod nft_candy_machine {
                 authority: transfer_authority_info.clone(),
                 authority_signer_seeds: &[],
                 token_program: ctx.accounts.token_program.clone(),
-                amount: candy_machine.data.price / 100 * candy_machine.splits.wallet3 as u64,
+                amount: candy_machine.data.price / 100 * candy_machine.data.sp3 as u64,
             })?;
             spl_token_transfer(TokenTransferParams {
                 source: token_account_info.clone(),
@@ -95,7 +95,7 @@ pub mod nft_candy_machine {
                 authority: transfer_authority_info.clone(),
                 authority_signer_seeds: &[],
                 token_program: ctx.accounts.token_program.clone(),
-                amount: candy_machine.data.price / 100 * candy_machine.splits.wallet4 as u64,
+                amount: candy_machine.data.price / 100 * candy_machine.data.sp4 as u64,
             })?;
         } else {
             if ctx.accounts.payer.lamports() < candy_machine.data.price {
@@ -105,7 +105,7 @@ pub mod nft_candy_machine {
                 &system_instruction::transfer(
                     &ctx.accounts.payer.key,
                     ctx.accounts.wallet1.key,
-                    candy_machine.data.price / 100 * candy_machine.splits.wallet1 as u64,
+                    candy_machine.data.price / 100 * candy_machine.data.sp1 as u64,
                 ),
                 &[
                     ctx.accounts.payer.clone(),
@@ -117,7 +117,7 @@ pub mod nft_candy_machine {
                 &system_instruction::transfer(
                     &ctx.accounts.payer.key,
                     ctx.accounts.wallet2.key,
-                    candy_machine.data.price / 100 * candy_machine.splits.wallet2 as u64,
+                    candy_machine.data.price / 100 * candy_machine.data.sp2 as u64,
                 ),
                 &[
                     ctx.accounts.payer.clone(),
@@ -129,7 +129,7 @@ pub mod nft_candy_machine {
                 &system_instruction::transfer(
                     &ctx.accounts.payer.key,
                     ctx.accounts.wallet3.key,
-                    candy_machine.data.price / 100 * candy_machine.splits.wallet3 as u64,
+                    candy_machine.data.price / 100 * candy_machine.data.sp3 as u64,
                 ),
                 &[
                     ctx.accounts.payer.clone(),
@@ -141,7 +141,7 @@ pub mod nft_candy_machine {
                 &system_instruction::transfer(
                     &ctx.accounts.payer.key,
                     ctx.accounts.wallet4.key,
-                    candy_machine.data.price / 100 * candy_machine.splits.wallet4 as u64,
+                    candy_machine.data.price / 100 * candy_machine.data.sp4 as u64,
                 ),
                 &[
                     ctx.accounts.payer.clone(),
@@ -433,13 +433,15 @@ pub mod nft_candy_machine {
         if data.uuid.len() != 6 {
             return Err(ErrorCode::UuidMustBeExactly6Length.into());
         }
+        if data.sp1 + data.sp2 + data.sp3 + data.sp4 != 100 {
+            return Err(ErrorCode::SplitsNot100.into());
+        }
         candy_machine.data = data;
         candy_machine.wallet1 = *ctx.accounts.wallet1.key;
 
         candy_machine.wallet2 = *ctx.accounts.wallet2.key;
         candy_machine.wallet3 = *ctx.accounts.wallet3.key;
         candy_machine.wallet4 = *ctx.accounts.wallet4.key;
-
         candy_machine.authority = *ctx.accounts.authority.key;
         candy_machine.config = ctx.accounts.config.key();
         candy_machine.bump = bump;
@@ -535,8 +537,6 @@ pub struct MintNFT<'info> {
     wallet3: AccountInfo<'info>,
     #[account(mut)]
     wallet4: AccountInfo<'info>,
-    #[account(mut)]
-    splits: AccountInfo<'info>,
     // With the following accounts we aren't using anchor macros because they are CPI'd
     // through to token-metadata which will do all the validations we need on them.
     #[account(mut)]
@@ -580,7 +580,6 @@ pub struct CandyMachine {
     pub wallet2: Pubkey,
     pub wallet3: Pubkey,
     pub wallet4: Pubkey,
-    pub splits: CandyMachineSplits,
     pub token_mint: Option<Pubkey>,
     pub config: Pubkey,
     pub data: CandyMachineData,
@@ -592,17 +591,13 @@ pub struct CandyMachine {
 pub struct CandyMachineData {
     pub uuid: String,
     pub price: u64,
+    pub sp1: u8,
+    pub sp2: u8,
+    pub sp3: u8,
+    pub sp4: u8,
     pub items_available: u64,
     pub go_live_date: Option<i64>,
 }
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
-pub struct CandyMachineSplits {
-    pub wallet1: u8,
-    pub wallet2: u8,
-    pub wallet3: u8,
-    pub wallet4: u8,
-}
-
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
 4 + 6 + // uuid + u32 len
 4 + MAX_SYMBOL_LENGTH + // u32 len + symbol
