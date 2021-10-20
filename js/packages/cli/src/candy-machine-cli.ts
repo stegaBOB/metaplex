@@ -489,7 +489,7 @@ programCommand('create_candy_machine')
   )
   .option(
     '-s1, --split1 <string>',
-    'the percent of the mint price that the sol-treasury-account1 recieves.',
+    'the percent of the mint price that the sol-treasury-account1 receives.',
     '100',
   )
   .option(
@@ -499,7 +499,7 @@ programCommand('create_candy_machine')
   )
   .option(
     '-s2, --split2 <string>',
-    'the percent of the mint price that the sol-treasury-account2 recieves.',
+    'the percent of the mint price that the sol-treasury-account2 receives.',
   )
   .option(
     '-st3, --sol-treasury-account3 <string>',
@@ -508,7 +508,7 @@ programCommand('create_candy_machine')
   )
   .option(
     '-s3, --split3 <string>',
-    'the percent of the mint price that the sol-treasury-account3 recieves.',
+    'the percent of the mint price that the sol-treasury-account3 receives.',
   )
   .option(
     '-st4, --sol-treasury-account4 <string>',
@@ -516,7 +516,7 @@ programCommand('create_candy_machine')
   )
   .option(
     '-s4, --split4 <string>',
-    'the percent of the mint price that the sol-treasury-account4 recieves.',
+    'the percent of the mint price that the sol-treasury-account4 receives.',
     '0',
   )
   .action(async (directory, cmd) => {
