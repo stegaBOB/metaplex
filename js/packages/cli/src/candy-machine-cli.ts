@@ -620,6 +620,10 @@ programCommand('create_candy_machine')
       {
         uuid: cacheContent.program.uuid,
         price: new anchor.BN(parsedPrice),
+        sp1: new anchor.BN(split1),
+        sp2: new anchor.BN(split2),
+        sp3: new anchor.BN(split3),
+        sp4: new anchor.BN(split4),
         itemsAvailable: new anchor.BN(Object.keys(cacheContent.items).length),
         goLiveDate: null,
       },
