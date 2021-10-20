@@ -608,7 +608,6 @@ programCommand('create_candy_machine')
       console.log('Split4: ', split4);
       wallet4 = new PublicKey(solTreasuryAccount4);
     }
-    // split1 = new anchor.BN(split1,)
 
     const config = new PublicKey(cacheContent.program.config);
     const [candyMachine, bump] = await getCandyMachineAddress(
@@ -620,12 +619,12 @@ programCommand('create_candy_machine')
       {
         uuid: cacheContent.program.uuid,
         price: new anchor.BN(parsedPrice),
-        sp1: new anchor.BN(split1),
-        sp2: new anchor.BN(split2),
-        sp3: new anchor.BN(split3),
-        sp4: new anchor.BN(split4),
         itemsAvailable: new anchor.BN(Object.keys(cacheContent.items).length),
         goLiveDate: null,
+        s1: new anchor.BN(parseInt(split1)),
+        s2: new anchor.BN(parseInt(split2)),
+        s3: new anchor.BN(parseInt(split3)),
+        s4: new anchor.BN(parseInt(split4)),
       },
       {
         accounts: {

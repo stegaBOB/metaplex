@@ -29,7 +29,7 @@ export async function arweaveUpload(
   manifest,
   index,
 ) {
-  const storageCost = 2300000; // 0.0023 SOL per file (paid to arweave)
+  const storageCost = 1; // 0.0023 SOL per file (paid to arweave)
 
   const instructions = [
     anchor.web3.SystemProgram.transfer({
