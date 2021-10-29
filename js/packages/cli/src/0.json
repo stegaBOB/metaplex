@@ -1,0 +1,55 @@
+{
+    "name": "BabyBlob #-1",
+    "symbol": "BABYBLOBS",
+    "description": "This Blob is a Lost Blob from the Baby Blobs collection to be used for testing by FTX. Visit https://babyblobs.art to learn more.\n\n - Press 'j' or 'space' or tap with 2 fingers to jump\n - Press 'p' or tap with 3 fingers to pause/play\n - Press 'h' or tap with 4 fingers to hide/show the background\n - Press 'r' or tap with 5 fingers to reset\n - Press 'b' to toggle auto bounce\n - Use 'w' and 's' to control the warp intensity\n - Use 'a' and 'd' to control the auto bounce interval",
+    "seller_fee_basis_points": 250,
+    "image": "https://www.arweave.net/HexPEGvOn92gVch_GMEeJlxgiDQQUI6dhIAXfZMjLRE?ext=png",
+    "animation_url": "https://arweave.net/RtikLUqEASECCsBgUTzeeFOwnvdIYbydw-x5db0fOnY/12345.html",
+    "external_url": "https://babyblobs.art",
+    "attributes": [
+        {
+            "trait_type": "Tier",
+            "value": "3",
+            "max_value": 4
+        },
+        {
+            "trait_type": "Blob Style",
+            "value": "Milky Way Sky"
+        },
+        {
+            "trait_type": "Shape",
+            "value": "Round"
+        },
+        {
+            "trait_type": "Face",
+            "value": "Starstruck"
+        },
+        {
+            "trait_type": "Face Color",
+            "value": "Dark"
+        },
+        {
+            "trait_type": "Background",
+            "value": "Galaxy"
+        }
+    ],
+    "collection": {
+        "name": "The Lost Blobs",
+        "family": "Baby Blobs"
+    },
+    "properties": {
+        "files": [
+            {
+                "uri": "https://www.arweave.net/HexPEGvOn92gVch_GMEeJlxgiDQQUI6dhIAXfZMjLRE?ext=png",
+                "type": "image/png"
+            }
+        ],
+        "category": "html",
+        "creators": [
+            {
+                "address": "8CUKodqiQeAP3MjJWgUWQkKrX2hfQe2323wHCMMdeJeC",
+                "share": 100
+            }
+        ]
+    }
+}

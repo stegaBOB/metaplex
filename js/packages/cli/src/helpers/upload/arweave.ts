@@ -29,27 +29,27 @@ export async function arweaveUpload(
   manifest,
   index,
 ) {
-  const storageCost = 2300000; // 0.0023 SOL per file (paid to arweave)
+  // const storageCost = 1; // 0.0023 SOL per file (paid to arweave)
 
-  const instructions = [
-    anchor.web3.SystemProgram.transfer({
-      fromPubkey: walletKeyPair.publicKey,
-      toPubkey: ARWEAVE_PAYMENT_WALLET,
-      lamports: storageCost,
-    }),
-  ];
+  // const instructions = [
+  //   anchor.web3.SystemProgram.transfer({
+  //     fromPubkey: walletKeyPair.publicKey,
+  //     toPubkey: ARWEAVE_PAYMENT_WALLET,
+  //     lamports: storageCost,
+  //   }),
+  // ];
 
-  const tx = await sendTransactionWithRetryWithKeypair(
-    anchorProgram.provider.connection,
-    walletKeyPair,
-    instructions,
-    [],
-    'single',
-  );
-  log.debug('transaction for arweave payment:', tx);
+  // const tx = await sendTransactionWithRetryWithKeypair(
+  //   anchorProgram.provider.connection,
+  //   walletKeyPair,
+  //   instructions,
+  //   [],
+  //   'single',
+  // );
+  // log.debug('transaction for arweave payment:', tx);
 
   const data = new FormData();
-  data.append('transaction', tx['txid']);
+  data.append('transaction', 1); //old command: data.append('transaction', tx['txid']);
   data.append('env', env);
   data.append('file[]', fs.createReadStream(image), {
     filename: `image.png`,

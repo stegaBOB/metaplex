@@ -1,5 +1,4 @@
 pub mod utils;
-
 use {
     crate::utils::{assert_initialized, assert_owned_by, spl_token_transfer, TokenTransferParams},
     anchor_lang::{
@@ -434,7 +433,12 @@ pub mod nft_candy_machine {
             return Err(ErrorCode::UuidMustBeExactly6Length.into());
         }
         candy_machine.data = data;
-        if candy_machine.data.s1 + candy_machine.data.s2 + candy_machine.data.s3 + candy_machine.data.s4 != 100 {
+        if candy_machine.data.s1
+            + candy_machine.data.s2
+            + candy_machine.data.s3
+            + candy_machine.data.s4
+            != 100
+        {
             return Err(ErrorCode::SplitsNot100.into());
         }
         candy_machine.wallet1 = *ctx.accounts.wallet1.key;
