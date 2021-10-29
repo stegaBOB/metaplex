@@ -1,10 +1,10 @@
-import * as anchor from '@project-serum/anchor';
+// import * as anchor from '@project-serum/anchor';
 import FormData from 'form-data';
 import fs from 'fs';
 import log from 'loglevel';
 import fetch from 'node-fetch';
-import { ARWEAVE_PAYMENT_WALLET } from '../constants';
-import { sendTransactionWithRetryWithKeypair } from '../transactions';
+// import { ARWEAVE_PAYMENT_WALLET } from '../constants';
+// import { sendTransactionWithRetryWithKeypair } from '../transactions';
 
 async function upload(data: FormData, manifest, index) {
   log.debug(`trying to upload ${index}.png: ${manifest.name}`);
