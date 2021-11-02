@@ -33,3 +33,6 @@ hfuzz_workspace
 js/packages/web/.env
 traits
 traits-configuration.json
+js/packages/cli/assets-1/Output1
+js/packages/cli/assets-1/Output2
+rust/cndypf6mGC57KHkPF6LXrf7esXgXXAUjuBr8wnK7d6V.json
