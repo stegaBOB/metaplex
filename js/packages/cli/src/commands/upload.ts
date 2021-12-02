@@ -108,6 +108,7 @@ export async function upload(
                 const res = await createConfig(anchorProgram, walletKeyPair, {
                   maxNumberOfLines: new BN(totalNFTs),
                   symbol: manifest.symbol,
+                  arweave_manifest: manifest.arweave_manifest,
                   sellerFeeBasisPoints: manifest.seller_fee_basis_points,
                   isMutable: mutable,
                   maxSupply: new BN(0),

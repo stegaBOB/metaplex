@@ -17,7 +17,7 @@ use {
     spl_token::state::Mint,
     std::cell::Ref,
 };
-anchor_lang::declare_id!("cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ");
+anchor_lang::declare_id!("tinyzGJsi2DxgKmHT15cuqXG3kqrLm1d7Si8GixVMN8");
 
 const PREFIX: &str = "candy_machine";
 #[program]
@@ -152,6 +152,14 @@ pub mod nft_candy_machine {
             ctx.accounts.rent.to_account_info(),
             candy_machine.to_account_info(),
         ];
+        let mut arweave_uri: String = config.data.arweave_manifest.clone();
+        arweave_uri.push_str(&config_line.uri);
+        arweave_uri.push_str(".json");
+        let mut array_of_zeroes = vec![];
+        while array_of_zeroes.len() < MAX_URI_LENGTH - arweave_uri.len() {
+            array_of_zeroes.push(0u8);
+        }
+        let arweave_uri_fixed = arweave_uri.clone() + std::str::from_utf8(&array_of_zeroes).unwrap();
 
         invoke_signed(
             &create_metadata_accounts(
@@ -163,7 +171,7 @@ pub mod nft_candy_machine {
                 candy_machine.key(),
                 config_line.name,
                 config.data.symbol.clone(),
-                config_line.uri,
+                arweave_uri_fixed,
                 Some(creators),
                 config.data.seller_fee_basis_points,
                 true,
@@ -237,6 +245,9 @@ pub mod nft_candy_machine {
         if data.uuid.len() != 6 {
             return Err(ErrorCode::UuidMustBeExactly6Length.into());
         }
+        if data.arweave_manifest.len() != ARWEAVE_MANIFEST_LEN {
+            return Err(ErrorCode::ArweaveManifestMustBeExactly64Length.into());
+        }
 
         let mut config = Config {
             data,
@@ -301,12 +312,7 @@ pub mod nft_candy_machine {
                 array_of_zeroes.push(0u8);
             }
             let name = line.name.clone() + std::str::from_utf8(&array_of_zeroes).unwrap();
-
-            let mut array_of_zeroes = vec![];
-            while array_of_zeroes.len() < MAX_URI_LENGTH - line.uri.len() {
-                array_of_zeroes.push(0u8);
-            }
-            let uri = line.uri.clone() + std::str::from_utf8(&array_of_zeroes).unwrap();
+            let uri = line.uri.clone();
             fixed_config_lines.push(ConfigLine { name, uri })
         }
 
@@ -551,8 +557,11 @@ pub struct CandyMachineData {
     pub go_live_date: Option<i64>,
 }
 
+pub const ARWEAVE_MANIFEST_LEN: usize = 64; // the arweave manifest is 63 characters long (ex: https://arweave.net/kQsAW9t6QMMG6a5_D1XxnC7nnPwRZrwjL38h9hPTIpQ/)
+
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
 4 + 6 + // uuid + u32 len
+4 + ARWEAVE_MANIFEST_LEN +
 4 + MAX_SYMBOL_LENGTH + // u32 len + symbol
 2 + // seller fee basis points
 1 + 4 + MAX_CREATOR_LIMIT*MAX_CREATOR_LEN + // optional + u32 len + actual vec
@@ -577,6 +586,8 @@ pub struct ConfigData {
     pub uuid: String,
     /// The symbol for the asset
     pub symbol: String,
+    /// The arweave manifest for the uri stuff
+    pub arweave_manifest: String, 
     /// Royalty basis points that goes to creators in secondary sales (0-10000)
     pub seller_fee_basis_points: u16,
     pub creators: Vec<Creator>,
@@ -608,7 +619,7 @@ pub fn get_config_line(
     Ok(config_line)
 }
 
-pub const CONFIG_LINE_SIZE: usize = 4 + MAX_NAME_LENGTH + 4 + MAX_URI_LENGTH;
+pub const CONFIG_LINE_SIZE: usize = 4 + MAX_NAME_LENGTH + 4 + 8;///8 is the only data needed to differentiate the different arweave bundle stuff.
 #[derive(AnchorSerialize, AnchorDeserialize, Debug)]
 pub struct ConfigLine {
     /// The name of the asset
@@ -657,4 +668,6 @@ pub enum ErrorCode {
     CandyMachineNotLiveYet,
     #[msg("Number of config lines must be at least number of items available")]
     ConfigLineMismatch,
+    #[msg("Arweave manifest must be exactly 64 characters long")]
+    ArweaveManifestMustBeExactly64Length
 }

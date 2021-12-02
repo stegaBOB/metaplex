@@ -15,7 +15,8 @@ export const ARWEAVE_PAYMENT_WALLET = new PublicKey(
   '6FKvsq4ydWFci6nGq9ckbjYMtnmaqAoatz5c9XWjiDuS',
 );
 export const CANDY_MACHINE_PROGRAM_ID = new PublicKey(
-  'cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ',
+  'tinyzGJsi2DxgKmHT15cuqXG3kqrLm1d7Si8GixVMN8',
+  // 'cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ',
 );
 export const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
@@ -39,16 +40,18 @@ export const WRAPPED_SOL_MINT = new PublicKey(
   'So11111111111111111111111111111111111111112',
 );
 export const GUMDROP_DISTRIBUTOR_ID = new PublicKey(
-  'gdrpGjVffourzkdDRrQmySw4aTHr8a3xmQzzxSwFD1a'
+  'gdrpGjVffourzkdDRrQmySw4aTHr8a3xmQzzxSwFD1a',
 );
 export const GUMDROP_TEMPORAL_SIGNER = new PublicKey(
-  'MSv9H2sMceAzccBganUXwGq3GXgqYAstmZAbFDZYbAV'
+  'MSv9H2sMceAzccBganUXwGq3GXgqYAstmZAbFDZYbAV',
 );
 
 export const CONFIG_ARRAY_START =
   32 + // authority
   4 +
   6 + // uuid + u32 len
+  4 +
+  64 + // arweavve manifest + u32 len
   4 +
   10 + // u32 len + symbol
   2 + // seller fee basis points
@@ -59,7 +62,7 @@ export const CONFIG_ARRAY_START =
   1 + //is mutable
   1 + // retain authority
   4; // max number of lines;
-export const CONFIG_LINE_SIZE = 4 + 32 + 4 + 200;
+export const CONFIG_LINE_SIZE = 4 + 32 + 4 + 8;
 
 export const CACHE_PATH = './.cache';
 

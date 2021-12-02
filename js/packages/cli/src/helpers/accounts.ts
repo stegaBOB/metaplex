@@ -77,6 +77,7 @@ export const createConfig = async function (
   configData: {
     maxNumberOfLines: anchor.BN;
     symbol: string;
+    arweave_manifest: string;
     sellerFeeBasisPoints: number;
     isMutable: boolean;
     maxSupply: anchor.BN;
@@ -103,7 +104,6 @@ export const createConfig = async function (
   if (totalShare !== 100) {
     throw new Error(`Invalid config, creators shares must add up to 100`);
   }
-
   return {
     config: configAccount.publicKey,
     uuid,
@@ -570,7 +570,7 @@ export async function getTokenAmount(
 export const getBalance = async (
   account: anchor.web3.PublicKey,
   env: string,
-  customRpcUrl?: string
+  customRpcUrl?: string,
 ): Promise<number> => {
   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
   const connection = new anchor.web3.Connection(
@@ -578,7 +578,7 @@ export const getBalance = async (
     customRpcUrl || web3.clusterApiUrl(env),
   );
   return await connection.getBalance(account);
-}
+};
 
 export async function getProgramAccounts(
   connection: anchor.web3.Connection,
