@@ -549,6 +549,8 @@ pub struct CandyMachineData {
     pub price: u64,
     pub items_available: u64,
     pub go_live_date: Option<i64>,
+    pub max_uri_length: Option<u64>,
+    pub uri_prefix_length: Option<u64>,
 }
 
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
