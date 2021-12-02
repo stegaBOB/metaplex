@@ -1,0 +1,10 @@
+{
+    "symbol": "TEST",
+    "creators": [
+        {
+            "address": "bob1upX2AoA7HAHzDTPMcYhWWnYJeMJturpswReqqP4",
+            "share": 100
+        }
+    ],
+    "seller_fee_basis_points": 500
+}

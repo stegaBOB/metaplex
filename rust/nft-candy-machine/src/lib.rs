@@ -557,7 +557,7 @@ pub struct CandyMachineData {
     pub go_live_date: Option<i64>,
 }
 
-pub const ARWEAVE_MANIFEST_LEN: usize = 64; // the arweave manifest is 63 characters long (ex: https://arweave.net/kQsAW9t6QMMG6a5_D1XxnC7nnPwRZrwjL38h9hPTIpQ/)
+pub const ARWEAVE_MANIFEST_LEN: usize = 64; // the arweave manifest is 64 characters long (ex: https://arweave.net/kQsAW9t6QMMG6a5_D1XxnC7nnPwRZrwjL38h9hPTIpQ/)
 
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
 4 + 6 + // uuid + u32 len

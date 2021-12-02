@@ -18,8 +18,8 @@ import {
   CACHE_PATH,
   CONFIG_ARRAY_START,
   CONFIG_LINE_SIZE,
-  EXTENSION_JSON,
-  EXTENSION_PNG,
+  // EXTENSION_JSON,
+  // EXTENSION_PNG,
   CANDY_MACHINE_PROGRAM_ID,
 } from './helpers/constants';
 import {
@@ -54,125 +54,74 @@ if (!fs.existsSync(CACHE_PATH)) {
 log.setLevel(log.levels.INFO);
 programCommand('upload')
   .argument(
-    '<directory>',
-    'Directory containing images named from 0-n',
+    '<setup-file>',
+    'the JSON file containing creators, symbol, and sellerFeeBasisPoints',
     val => {
-      return fs.readdirSync(`${val}`).map(file => path.join(val, file));
+      return fs.readFileSync(`${val}`);
     },
   )
-  .option('-n, --number <number>', 'Number of images to upload')
+  .requiredOption('-n, --number <number>', 'Number of images to upload')
   .option('-b, --batchSize <number>', 'Batch size - defaults to 1000')
-  .option(
-    '-s, --storage <string>',
-    'Database to use for storage (arweave, ipfs, aws)',
-    'arweave',
-  )
-  .option(
-    '--ipfs-infura-project-id <string>',
-    'Infura IPFS project id (required if using IPFS)',
-  )
-  .option(
-    '--ipfs-infura-secret <string>',
-    'Infura IPFS scret key (required if using IPFS)',
-  )
-  .option(
-    '--aws-s3-bucket <string>',
-    '(existing) AWS S3 Bucket name (required if using aws)',
-  )
+  // .option(
+  //   '--ipfs-infura-secret <string>',
+  //   'Infura IPFS scret key (required if using IPFS)',
+  // )
+  // .option(
+  //   '--aws-s3-bucket <string>',
+  //   '(existing) AWS S3 Bucket name (required if using aws)',
+  // )
   .option('--no-retain-authority', 'Do not retain authority to update metadata')
   .option('--no-mutable', 'Metadata will not be editable')
   .option(
     '-r, --rpc-url <string>',
     'custom rpc url since this is a heavy command',
   )
-  .option(
+  .requiredOption(
     '-m, --arweave-manifest <string>',
     'The 64 character long arweave manifest root directory',
   )
-  .action(async (files: string[], options, cmd) => {
+  .action(async (file: Buffer, options, cmd) => {
     const {
       number,
       keypair,
       env,
       cacheName,
-      storage,
-      ipfsInfuraProjectId,
-      ipfsInfuraSecret,
-      awsS3Bucket,
       retainAuthority,
       mutable,
       rpcUrl,
       batchSize,
       arweaveManifest,
+      // storage,
+      // awsS3Bucket,
+      // ipfsInfuraProjectId,
+      // ipfsInfuraSecret,
     } = cmd.opts();
-
-    if (storage === 'ipfs' && (!ipfsInfuraProjectId || !ipfsInfuraSecret)) {
-      throw new Error(
-        'IPFS selected as storage option but Infura project id or secret key were not provided.',
-      );
-    }
-    if (storage === 'aws' && !awsS3Bucket) {
-      throw new Error(
-        'aws selected as storage option but existing bucket name (--aws-s3-bucket) not provided.',
-      );
-    }
-    if (!(storage === 'arweave' || storage === 'ipfs' || storage === 'aws')) {
-      throw new Error(
-        "Storage option must either be 'arweave', 'ipfs', or 'aws'.",
-      );
-    }
     if (arweaveManifest?.length !== 64) {
       throw new Error(
         `The arweave manifest (-m <string>) must be a 64 character long string.`,
       );
     }
-    const ipfsCredentials = {
-      projectId: ipfsInfuraProjectId,
-      secretKey: ipfsInfuraSecret,
-    };
 
-    const pngFileCount = files.filter(it => {
-      return it.endsWith(EXTENSION_PNG);
-    }).length;
-    const jsonFileCount = files.filter(it => {
-      return it.endsWith(EXTENSION_JSON);
-    }).length;
-
-    const parsedNumber = parseInt(number);
-    const elemCount = parsedNumber ? parsedNumber : pngFileCount;
-
-    if (pngFileCount !== jsonFileCount) {
-      throw new Error(
-        `number of png files (${pngFileCount}) is different than the number of json files (${jsonFileCount})`,
-      );
-    }
-
-    if (elemCount < pngFileCount) {
-      throw new Error(
-        `max number (${elemCount})cannot be smaller than the number of elements in the source folder (${pngFileCount})`,
-      );
-    }
-
-    log.info(`Beginning the upload for ${elemCount} (png+json) pairs`);
-
+    log.info(`Beginning the upload for ${number} (uris) pairs`);
+    const setupFile = file.toString();
     const startMs = Date.now();
     log.info('started at: ' + startMs.toString());
     let warn = false;
     for (;;) {
       const successful = await upload(
-        files,
+        setupFile,
         cacheName,
         env,
         keypair,
-        elemCount,
-        storage,
+        number,
         retainAuthority,
         mutable,
         rpcUrl,
-        ipfsCredentials,
-        awsS3Bucket,
-        batchSize,
         arweaveManifest,
+        batchSize,
+        // storage,
+        // awsS3Bucket,
+        // ipfsCredentials,
       );
 
       if (successful) {
