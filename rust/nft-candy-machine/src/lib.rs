@@ -95,10 +95,50 @@ pub mod nft_candy_machine {
             )?;
         }
 
-        let config_line = get_config_line(
-            &config.to_account_info(),
-            candy_machine.items_redeemed as usize,
-        )?;
+        // let new_symbol =
+        //     config.data.symbol.clone() + std::str::from_utf8(&array_of_zeroes).unwrap();
+        let mut config_line: ConfigLine;
+        match candy_machine.data.max_uri_length {
+            None => {
+                config_line = get_config_line(
+                    &config.to_account_info(),
+                    candy_machine.items_redeemed as usize,
+                    MAX_URI_LENGTH,
+                )?;
+            }
+            Some(length) => {
+                match &candy_machine.data.uri_prefix {
+                    None => {
+                        config_line = get_config_line(
+                            &config.to_account_info(),
+                            candy_machine.items_redeemed as usize,
+                            length,
+                        )?;
+                    }
+                    Some(string) => {
+                        config_line = get_config_line(
+                            &config.to_account_info(),
+                            candy_machine.items_redeemed as usize,
+                            length,
+                        )?;
+                        let mut full_uri: String = string.to_string();
+                        full_uri.push_str(&config_line.uri);
+                        config_line.uri = full_uri;
+                    }
+                };
+                match &candy_machine.data.uri_suffix {
+                    None => {}
+                    Some(string) => {
+                        config_line.uri.push_str(&string);
+                    }
+                }
+                let mut array_of_zeroes = vec![];
+                while array_of_zeroes.len() < MAX_URI_LENGTH - config_line.uri.len() {
+                    array_of_zeroes.push(0u8);
+                }
+                config_line.uri = config_line.uri.clone() + std::str::from_utf8(&array_of_zeroes).unwrap();
+            }
+        }
 
         candy_machine.items_redeemed = candy_machine
             .items_redeemed
@@ -404,10 +444,25 @@ pub mod nft_candy_machine {
             return Err(ErrorCode::ConfigLineMismatch.into());
         }
 
-        let _config_line = match get_config_line(&ctx.accounts.config.to_account_info(), 0) {
-            Ok(val) => val,
-            Err(_) => return Err(ErrorCode::ConfigMustHaveAtleastOneEntry.into()),
-        };
+        match candy_machine.data.max_uri_length {
+            None => {
+                let _config_line = match get_config_line(
+                    &ctx.accounts.config.to_account_info(),
+                    0,
+                    CONFIG_LINE_SIZE,
+                ) {
+                    Ok(val) => val,
+                    Err(_) => return Err(ErrorCode::ConfigMustHaveAtleastOneEntry.into()),
+                };
+            }
+            Some(val) => {
+                let _config_line =
+                    match get_config_line(&ctx.accounts.config.to_account_info(), 0, val) {
+                        Ok(val) => val,
+                        Err(_) => return Err(ErrorCode::ConfigMustHaveAtleastOneEntry.into()),
+                    };
+            }
+        }
 
         Ok(())
     }
@@ -549,8 +604,9 @@ pub struct CandyMachineData {
     pub price: u64,
     pub items_available: u64,
     pub go_live_date: Option<i64>,
-    pub max_uri_length: Option<u64>,
-    pub uri_prefix_length: Option<u64>,
+    pub max_uri_length: Option<usize>,
+    pub uri_prefix: Option<String>,
+    pub uri_suffix: Option<String>,
 }
 
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
@@ -595,6 +651,7 @@ pub fn get_config_count(data: &Ref<&mut [u8]>) -> core::result::Result<usize, Pr
 pub fn get_config_line(
     a: &AccountInfo,
     index: usize,
+    config_line_size: usize,
 ) -> core::result::Result<ConfigLine, ProgramError> {
     let arr = a.data.borrow();
 
