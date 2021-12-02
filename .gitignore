@@ -38,3 +38,6 @@ traits-configuration.json
 config
 config.txt
 rust/nft-candy-machine/tinyzGJsi2DxgKmHT15cuqXG3kqrLm1d7Si8GixVMN8.json
+js/packages/cli/test-ledger/faucet-keypair.json
+js/packages/cli/test-ledger/*
+js/packages/cli/shortconfig

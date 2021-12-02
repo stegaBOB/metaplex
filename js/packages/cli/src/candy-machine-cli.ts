@@ -85,6 +85,10 @@ programCommand('upload')
     '-r, --rpc-url <string>',
     'custom rpc url since this is a heavy command',
   )
+  .option(
+    '-m, --arweave-manifest <string>',
+    'The 64 character long arweave manifest root directory',
+  )
   .action(async (files: string[], options, cmd) => {
     const {
       number,
@@ -99,6 +103,7 @@ programCommand('upload')
       mutable,
       rpcUrl,
       batchSize,
+      arweaveManifest,
     } = cmd.opts();
 
     if (storage === 'ipfs' && (!ipfsInfuraProjectId || !ipfsInfuraSecret)) {
@@ -114,6 +119,11 @@ programCommand('upload')
     if (!(storage === 'arweave' || storage === 'ipfs' || storage === 'aws')) {
       throw new Error(
         "Storage option must either be 'arweave', 'ipfs', or 'aws'.",
+      );
+    }
+    if (arweaveManifest?.length !== 64) {
+      throw new Error(
+        `The arweave manifest (-m <string>) must be a 64 character long string.`,
       );
     }
     const ipfsCredentials = {
@@ -162,6 +172,7 @@ programCommand('upload')
         ipfsCredentials,
         awsS3Bucket,
         batchSize,
+        arweaveManifest,
       );
 
       if (successful) {

@@ -77,7 +77,7 @@ export const createConfig = async function (
   configData: {
     maxNumberOfLines: anchor.BN;
     symbol: string;
-    arweave_manifest: string;
+    arweaveManifest: string;
     sellerFeeBasisPoints: number;
     isMutable: boolean;
     maxSupply: anchor.BN;
@@ -96,6 +96,12 @@ export const createConfig = async function (
     throw new Error(`Invalid config, there must be at least one creator.`);
   }
 
+  if (configData.arweaveManifest.length !== 64) {
+    throw new Error(`Invalid arweave manifest. Must be 64 characters long.`);
+  }
+
+  // console.log(configData.arweaveManifest)
+
   const totalShare = (configData.creators || []).reduce(
     (acc, curr) => acc + curr.share,
     0,
@@ -104,6 +110,8 @@ export const createConfig = async function (
   if (totalShare !== 100) {
     throw new Error(`Invalid config, creators shares must add up to 100`);
   }
+  // console.log(configData);
+  // console.log(payerWallet.publicKey.toBase58())
   return {
     config: configAccount.publicKey,
     uuid,

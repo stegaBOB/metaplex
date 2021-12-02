@@ -28,6 +28,7 @@ export async function upload(
   ipfsCredentials: ipfsCreds,
   awsS3Bucket: string,
   batchSize: number,
+  arweaveManifest: string,
 ): Promise<boolean> {
   let uploadSuccessful = true;
 
@@ -108,7 +109,7 @@ export async function upload(
                 const res = await createConfig(anchorProgram, walletKeyPair, {
                   maxNumberOfLines: new BN(totalNFTs),
                   symbol: manifest.symbol,
-                  arweave_manifest: manifest.arweave_manifest,
+                  arweaveManifest: arweaveManifest,
                   sellerFeeBasisPoints: manifest.seller_fee_basis_points,
                   isMutable: mutable,
                   maxSupply: new BN(0),
@@ -124,6 +125,7 @@ export async function upload(
                 cacheContent.program.uuid = res.uuid;
                 cacheContent.program.config = res.config.toBase58();
                 config = res.config;
+                cacheContent.arweaveManifest = arweaveManifest;
 
                 log.info(
                   `initialized config for a candy machine with publickey: ${res.config.toBase58()}`,

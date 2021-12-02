@@ -241,6 +241,7 @@ pub mod nft_candy_machine {
     }
 
     pub fn initialize_config(ctx: Context<InitializeConfig>, data: ConfigData) -> ProgramResult {
+        msg!("Initializing config");
         let config_info = &mut ctx.accounts.config;
         if data.uuid.len() != 6 {
             return Err(ErrorCode::UuidMustBeExactly6Length.into());
@@ -274,7 +275,6 @@ pub mod nft_candy_machine {
         for i in 0..new_data.len() {
             data[i] = new_data[i];
         }
-
         let vec_start =
             CONFIG_ARRAY_START + 4 + (config.data.max_number_of_lines as usize) * CONFIG_LINE_SIZE;
         let as_bytes = (config
