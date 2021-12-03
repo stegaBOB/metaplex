@@ -33,7 +33,6 @@ pub mod nft_candy_machine {
         let candy_machine = &mut ctx.accounts.candy_machine;
         let config = &ctx.accounts.config;
         let clock = &ctx.accounts.clock;
-
         match candy_machine.data.go_live_date {
             None => {
                 if *ctx.accounts.payer.key != candy_machine.authority {
@@ -272,7 +271,10 @@ pub mod nft_candy_machine {
         Ok(())
     }
 
-    pub fn initialize_config(ctx: Context<InitializeConfig>, data: ConfigData) -> ProgramResult {
+    pub fn initialize_config(ctx: Context<InitializeConfig>, saved_uri_length: u32, data: ConfigData) -> ProgramResult {
+        
+        let new_config_line_size = CONFIG_LINE_SIZE - saved_uri_length as usize;
+
         let config_info = &mut ctx.accounts.config;
         if data.uuid.len() != 6 {
             return Err(ErrorCode::UuidMustBeExactly6Length.into());
@@ -305,7 +307,7 @@ pub mod nft_candy_machine {
         }
 
         let vec_start =
-            CONFIG_ARRAY_START + 4 + (config.data.max_number_of_lines as usize) * CONFIG_LINE_SIZE;
+            CONFIG_ARRAY_START + 4 + (config.data.max_number_of_lines as usize) * new_config_line_size;
         let as_bytes = (config
             .data
             .max_number_of_lines
@@ -455,9 +457,9 @@ pub mod nft_candy_machine {
                     Err(_) => return Err(ErrorCode::ConfigMustHaveAtleastOneEntry.into()),
                 };
             }
-            Some(val) => {
+            Some(length) => {
                 let _config_line =
-                    match get_config_line(&ctx.accounts.config.to_account_info(), 0, val) {
+                    match get_config_line(&ctx.accounts.config.to_account_info(), 0, length) {
                         Ok(val) => val,
                         Err(_) => return Err(ErrorCode::ConfigMustHaveAtleastOneEntry.into()),
                     };
@@ -659,8 +661,8 @@ pub fn get_config_line(
     if index > total {
         return Err(ErrorCode::IndexGreaterThanLength.into());
     }
-    let data_array = &arr[CONFIG_ARRAY_START + 4 + index * (CONFIG_LINE_SIZE)
-        ..CONFIG_ARRAY_START + 4 + (index + 1) * (CONFIG_LINE_SIZE)];
+    let data_array = &arr[CONFIG_ARRAY_START + 4 + index * (config_line_size)
+        ..CONFIG_ARRAY_START + 4 + (index + 1) * (config_line_size)];
 
     let config_line: ConfigLine = ConfigLine::try_from_slice(data_array)?;
 
